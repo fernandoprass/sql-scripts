@@ -39,7 +39,7 @@ BEGIN
 
    INSERT INTO @numeros VALUES('Um', 1, 1)
    INSERT INTO @numeros VALUES('Dois', 2, 2)
-   INSERT INTO @numeros VALUES('TrÃªs', 3, 3)
+   INSERT INTO @numeros VALUES('Três', 3, 3)
    INSERT INTO @numeros VALUES('Quatro', 4, 4)
    INSERT INTO @numeros VALUES('Cinco', 5, 5)
    INSERT INTO @numeros VALUES('Seis', 6, 6)
@@ -92,12 +92,12 @@ BEGIN
    INSERT INTO @numeros VALUES('Novecentos e', 901, 999)
 
    INSERT INTO @milhar VALUES('Mil', 'Mil', 4, 6)
-   INSERT INTO @milhar VALUES('MilhÃ£o', 'MilhÃµes', 7, 9)
-   INSERT INTO @milhar VALUES('BilhÃ£o', 'BilhÃµes', 10, 12)
-   INSERT INTO @milhar VALUES('TrilhÃ£o', 'TrilhÃµes', 13, 15)
-   INSERT INTO @milhar VALUES('QuadrilhÃ£o', 'QuadrilhÃµes', 16, 18)
+   INSERT INTO @milhar VALUES('Milhão', 'Milhões', 7, 9)
+   INSERT INTO @milhar VALUES('Bilhão', 'Bilhões', 10, 12)
+   INSERT INTO @milhar VALUES('Trilhão', 'Trilhões', 13, 15)
+   INSERT INTO @milhar VALUES('Quadrilhão', 'Quadrilhões', 16, 18)
 
-   --Busca o nÃºmero de casas (sempre em 3)
+   --Busca o número de casas (sempre em 3)
    SELECT TOP 1 @menorN = menor - 1 FROM @milhar WHERE menor > len(@valorStr)
 
    --Adiciona casas a esquerda (tratando sempre de 3 em 3 casas)
@@ -130,7 +130,7 @@ BEGIN
    IF (@pedacoInt1 > 0)
    SELECT @retorno = @retorno + CASE WHEN @pedacoInt1 > 1 THEN descricaoPL ELSE descricaoUm END + ' ' FROM @milhar WHERE (len(@valorStr) BETWEEN menor and maior)
 
-   --Remove os pedaÃ§os efetuados
+   --Remove os pedaços efetuados
    SET @valorStr = right(@valorStr, len(@valorStr) - 3)
 
    IF (convert(int, left(@valorStr, 3)) > 0)
@@ -158,7 +158,7 @@ BEGIN
    SET @pedacoInt1 = Convert(int, @pedacoStr1)
    SET @pedacoInt2 = Convert(int, @pedacoStr2)
 
-   --Define a descriÃ§Ã£o (NÃ£o coloca se nÃ£o tiver reais)
+   --Define a descrição (Não coloca se não tiver reais)
    IF (@pedacoInt1 > 0 AND (len(@retorno) > 0))
    SET @retorno = @retorno + 'e '
 
@@ -173,7 +173,7 @@ BEGIN
    ORDER BY
    maior DESC
 
-   --Define a descriÃ§Ã£o
+   --Define a descrição
    IF (@pedacoInt1 > 0)
       SET @retorno = @retorno + 'Centavo' + CASE WHEN @pedacoInt1 > 1 THEN 's' ELSE '' END 
    
