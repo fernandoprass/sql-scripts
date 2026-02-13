@@ -4,7 +4,7 @@
 -- Description: Create a recursive procedure to return records from a self-referenced table
 -- Note 1: This procedure leaves in memory a table called hierarchy
 -- Note 2: The "contador" parameter should be started as 0 (zero)
--- Contact: https://gitlab.com/fernando.prass or https://twitter.com/oFernandoPrass
+-- Contact: https://github.com/fernandoprass or https://twitter.com/oFernandoPrass
 -- =====================================================================
 
 CREATE TABLE `SUBJECT ` (
@@ -16,7 +16,7 @@ CREATE TABLE `SUBJECT ` (
   CONSTRAINT `FK_SUBJECT _SUBJECT _MASTER` FOREIGN KEY (`ID_SUBJECT_MASTER`) REFERENCES `SUBJECT ` (`ID_SUBJECT `) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
 
-INSERT INTO `SUBJECT ` VALUES (1,'Biologia',NULL),(2,'1. Estudo da Biologia',1),(3,'1.1. Conceito de Biologia',2),(4,'1.2. Níveis de organização dos seres vivos',2),(5,'1.3. Subdivisões da Biologia',2),(7,'2. Química Celular',1),(8,'2.1. Componentes inorgânicos',7),(11,'2.2. Componentes orgânicos',7);
+INSERT INTO `SUBJECT ` VALUES (1,'Biologia',NULL),(2,'1. Estudo da Biologia',1),(3,'1.1. Conceito de Biologia',2),(4,'1.2. Nï¿½veis de organizaï¿½ï¿½o dos seres vivos',2),(5,'1.3. Subdivisï¿½es da Biologia',2),(7,'2. Quï¿½mica Celular',1),(8,'2.1. Componentes inorgï¿½nicos',7),(11,'2.2. Componentes orgï¿½nicos',7);
 
 
 

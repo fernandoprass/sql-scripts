@@ -2,7 +2,7 @@
 -- Author: Fernando Prass | Create date: 10/07/2016
 -- Language: T-SQL for SQL Server 2005+
 -- Description: Determine how much space on disk each table is consuming
--- Contact: https://gitlab.com/fernando.prass or https://twitter.com/oFernandoPrass
+-- Contact: https://github.com/fernandoprass or https://twitter.com/oFernandoPrass
 -- =====================================================================
 
 declare @tableName sysname, @schemaName sysname

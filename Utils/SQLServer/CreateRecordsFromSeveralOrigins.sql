@@ -4,7 +4,7 @@
 -- Description: This code is part of an Accounting software, it generate records from several origins.
 --              With it, you can configure what Accounting entries need be generate when one events happens 
 --              (eg.: when the company pays an account you need to register the debit and the withdrawal into the bank account
--- Contact: https://gitlab.com/fernando.prass or https://twitter.com/oFernandoPrass
+-- Contact: https://github.com/fernandoprass or https://twitter.com/oFernandoPrass
 -- =====================================================================
 
 ALTER PROCEDURE [dbo].[spGerarLancamentos]
@@ -32,21 +32,21 @@ SET @ano = REPLICATE('0',4-LEN(DATEPART(YEAR,GETDATE()))) + CONVERT(varchar(4),D
 SET @retorno = 0
 SET @dataHoraLancamento = GETDATE()
 SET @cont = 0
-SET @validarLancamentoTrf = 'S' --por default valida os saldo dos lançamento da TRF
+SET @validarLancamentoTrf = 'S' --por default valida os saldo dos lanï¿½amento da TRF
 SELECT @idTciOrigemLancamentoLivre = dbo.fcBuscarTabelaCampoItemPorNome('LANCAMENTO', 'ORIGEM_LANCAMENTO', 'LANCAMENTO LIVRE')
 SELECT @permiteDataDocPosterior = dbo.fcBuscarValorParametro('LANCAMENTO', 'PERMITE_LANCAMENTO_DATA_DOC_POSTERIOR')
 SELECT @usarDataSistemaParaLancamento = dbo.fcBuscarValorParametro('LANCAMENTO', 'DATA_LANCAMENTO_USAR_DATA_SISTEMA')
 
 IF(@nomeTabela = 'TRF')
 BEGIN
-   --se for lancamento para o mesmo projeto da TRF, não valida pois "provavelmente" seja uma TRF para ajuste de saldo das metas
+   --se for lancamento para o mesmo projeto da TRF, nï¿½o valida pois "provavelmente" seja uma TRF para ajuste de saldo das metas
    SELECT @validarLancamentoTrf = CASE WHEN COUNT(*) > 0 THEN 'N' ELSE 'S' END
    FROM TRF
    WHERE ID_TRF = @idTabela
       AND ID_PROJETO_ORIGEM = ID_PROJETO_DESTINO
 END
 
---verifica se existe o registro na tabela LANCAMENTO_MES fechado (não permitindo lançamentos)
+--verifica se existe o registro na tabela LANCAMENTO_MES fechado (nï¿½o permitindo lanï¿½amentos)
 EXEC dbo.spLancamentoMes @dataHoraLancamento, @retorno OUTPUT
 IF(ISNULL(@retorno,0) > 0)
    RETURN
@@ -67,13 +67,13 @@ EXECUTE sp_executesql  @sqlOrigemPagamento
                      , @retorno3=@dataHoraLancamentoTabela OUTPUT
 
 IF(@dataHoraLancamentoTabela IS NOT NULL AND @nomeTabela <> 'ADIANTAMENTO' AND @nomeTabela <> 'LANCAMENTO_ESTORNO')
-   SET @retorno = 3 --Já foram gerados os lançamentos para este item
+   SET @retorno = 3 --Jï¿½ foram gerados os lanï¿½amentos para este item
 ELSE IF(@idTciOrigemPagamento IS NULL)
-   SET @retorno = 6 --O campo Origem do Pagamento é de preenchimento obrigatório
+   SET @retorno = 6 --O campo Origem do Pagamento ï¿½ de preenchimento obrigatï¿½rio
 ELSE IF(@idTciFormaPagamento IS NULL)
-   SET @retorno = 7 --O campo Forma de Pagamento é de preenchimento obrigatório
+   SET @retorno = 7 --O campo Forma de Pagamento ï¿½ de preenchimento obrigatï¿½rio
 ELSE IF((SELECT ISNULL(PERMITE_LANCAR,'N') FROM USUARIO WHERE ID_USUARIO = @idUsuario) = 'N')
-   SET @retorno = 40 --Você não tem permissão para realizar essa operação. Consulte o Administrador do Sistema.
+   SET @retorno = 40 --Vocï¿½ nï¿½o tem permissï¿½o para realizar essa operaï¿½ï¿½o. Consulte o Administrador do Sistema.
 
 IF(@retorno > 0)
    RETURN
@@ -88,7 +88,7 @@ BEGIN TRY
                         , @id = @idTabela
                         , @projetoMeta=@idProjetoMeta OUTPUT
    IF(@idProjetoMeta IS NULL)
-      SET @idProjetoMeta = -1 --seta como -1 pois o usuario pode não ter selecionado a meta para fazer o rateio
+      SET @idProjetoMeta = -1 --seta como -1 pois o usuario pode nï¿½o ter selecionado a meta para fazer o rateio
 END TRY
 BEGIN CATCH
    SET @idProjetoMeta = NULL
@@ -155,7 +155,7 @@ INTO @id_lancamento_configuracao, @tabela, @tabelaProjeto, @tipo, @campo_doc_num
 WHILE @@FETCH_STATUS = 0
 BEGIN
    BEGIN TRY
-      --se o nome for diferente do padrão da meta
+      --se o nome for diferente do padrï¿½o da meta
       IF(@idProjetoMeta IS NULL OR @nomeCampoProjetoMeta <> 'ID_PROJETO_META')
       BEGIN
          BEGIN TRY
@@ -178,7 +178,7 @@ BEGIN
          BEGIN TRY
             DECLARE @idTabelaProjeto integer
           
-            --busca o nome do ID que será usado na busca da meta
+            --busca o nome do ID que serï¿½ usado na busca da meta
             SELECT @sqlMeta = 'SELECT @idTab = ID_' + ISNULL(@tabelaProjeto,@nomeTabela) + ' '
                             + 'FROM dbo.' + @nomeTabela
                             + ' WHERE ID_' + @nomeTabela + ' = @id '
@@ -188,7 +188,7 @@ BEGIN
                                  , @id = @idTabela
                                  , @idTab=@idTabelaProjeto OUTPUT
                                           
-            --busca a meta na tabela que faz referencia a que está sendo inserida
+            --busca a meta na tabela que faz referencia a que estï¿½ sendo inserida
             SELECT @sqlMeta = 'SELECT @projetoMeta = ' + ISNULL(@nomeCampoProjetoMeta,'ID_PROJETO_META') + ' '
                             + 'FROM dbo.' + ISNULL(@tabelaProjeto,@nomeTabela)
                             + ' WHERE ID_' + ISNULL(@tabelaProjeto,@nomeTabela) + ' = @id '
@@ -369,14 +369,14 @@ BEGIN
             IF(@lDocumentoData > @dataHoraLancamento)
             BEGIN
                ROLLBACK TRANSACTION
-               SET @retorno = 150 --A Data do Documento não pode ser maior que a Data do Lançamento
+               SET @retorno = 150 --A Data do Documento nï¿½o pode ser maior que a Data do Lanï¿½amento
                CLOSE crLancamentoContabil
                DEALLOCATE crLancamentoContabil
                RETURN
             END
          END   
 
-         --se for para não vincular o projeto ao lançamento, seta como nulo
+         --se for para nï¿½o vincular o projeto ao lanï¿½amento, seta como nulo
          IF(@vincularProjeto = 'N')
          BEGIN
             SET @lIdProjeto = NULL
@@ -412,7 +412,7 @@ BEGIN
             IF(@lIdContaContabil IS NULL)
             BEGIN
                ROLLBACK TRANSACTION
-               SET @retorno = 25 --É obrigatório o preenchimento da Conta Contábil
+               SET @retorno = 25 --ï¿½ obrigatï¿½rio o preenchimento da Conta Contï¿½bil
                CLOSE crLancamentoContabil
                DEALLOCATE crLancamentoContabil
                RETURN
@@ -428,10 +428,10 @@ BEGIN
                WHERE ID_PROJETO_META = @idProjetoMeta
             END
             
-            --SE NÃO ACHOU A CC DA META, BUSCA DO PROJETO
+            --SE Nï¿½O ACHOU A CC DA META, BUSCA DO PROJETO
             IF(@lIdContaContabil IS NULL)
             BEGIN
-               IF (@lIdProjeto IS NULL) --se o projeto eh nulo busca a Conta da Fundação
+               IF (@lIdProjeto IS NULL) --se o projeto eh nulo busca a Conta da Fundaï¿½ï¿½o
                BEGIN
                   SELECT @lIdContaContabil=ID_CONTA_CONTABIL
                   FROM dbo.FUNDACAO
@@ -446,7 +446,7 @@ BEGIN
                   IF(@lIdContaContabil IS NULL)
                   BEGIN
                     ROLLBACK TRANSACTION
-                       SET @retorno = 8 --Não foi possível gerar os lançamentos. Projeto sem Conta Contábil cadastrada
+                       SET @retorno = 8 --Nï¿½o foi possï¿½vel gerar os lanï¿½amentos. Projeto sem Conta Contï¿½bil cadastrada
                     CLOSE crLancamentoContabil
                     DEALLOCATE crLancamentoContabil
                     RETURN             
@@ -469,7 +469,7 @@ BEGIN
             SET @lDocumentoData = CASE WHEN @lDocumentoData IS NOT NULL THEN @lDocumentoData ELSE GETDATE() END
             SET @cont += 1
           
-            --se não for um historico padrão, busca na tabela de configuração a origem
+            --se nï¿½o for um historico padrï¿½o, busca na tabela de configuraï¿½ï¿½o a origem
             IF(@id_lancamento_tipo IS NULL AND @tabela_lancamento_tipo IS NOT NULL)
             BEGIN
                DECLARE @sqlHistorico nvarchar(500), @parametroHistorico nvarchar(500)
@@ -521,7 +521,7 @@ BEGIN
             IF(@siconv = 'S' AND (SELECT dbo.fcBuscarValorParametro('PROJETO', 'SICONV_FORMA_PAGTO_NAO_PERMITIDA')) LIKE '%'+CONVERT(varchar(10),@idTciFormaPagamento)+'%')
             BEGIN
                ROLLBACK TRANSACTION
-               SET @retorno = 121 --Projeto do tipo SICONV não permite essa Forma de Pagamento
+               SET @retorno = 121 --Projeto do tipo SICONV nï¿½o permite essa Forma de Pagamento
                CLOSE crLancamentoContabil
                DEALLOCATE crLancamentoContabil
                RETURN
@@ -546,12 +546,12 @@ BEGIN
                   AND NUMERO = 1
             END
             
-            --excessão a regra, esta conta 3 deve ter um projeto relacionado
+            --excessï¿½o a regra, esta conta 3 deve ter um projeto relacionado
             IF(@lIdContaContabil = (SELECT CONVERT(integer, STR(dbo.fcBuscarValorParametro('LANCAMENTO', 'CONTA_RELACIONADA_PROJETO'),6,0)))
                AND @lIdProjeto IS NULL)
             BEGIN
                ROLLBACK TRANSACTION
-               SET @retorno = 46 --Não é permitido gerar Lançamentos para a conta 311.102 sem Projeto relacionado
+               SET @retorno = 46 --Nï¿½o ï¿½ permitido gerar Lanï¿½amentos para a conta 311.102 sem Projeto relacionado
                CLOSE crLancamentoContabil
                DEALLOCATE crLancamentoContabil
                RETURN
@@ -575,7 +575,7 @@ BEGIN
                   AND @nomeTabela <> 'ADIANTAMENTO_RECIBO' )
                BEGIN
                   ROLLBACK TRANSACTION
-                  SET @retorno = 39 --Não é permitido gerar Lançamentos para Pessoa sem CPF/CNPJ
+                  SET @retorno = 39 --Nï¿½o ï¿½ permitido gerar Lanï¿½amentos para Pessoa sem CPF/CNPJ
                   CLOSE crLancamentoContabil
                   DEALLOCATE crLancamentoContabil
                   RETURN
@@ -587,7 +587,7 @@ BEGIN
                      AND @nomeTabela IN ('RPA_RPS', 'BOLSA')) 
                BEGIN
                   ROLLBACK TRANSACTION
-                  SET @retorno = 52 --A Pessoa informada não possui PIS/PASEP cadastrado. Não é possível gerar os lançamentos.
+                  SET @retorno = 52 --A Pessoa informada nï¿½o possui PIS/PASEP cadastrado. Nï¿½o ï¿½ possï¿½vel gerar os lanï¿½amentos.
                   CLOSE crLancamentoContabil
                   DEALLOCATE crLancamentoContabil
                   RETURN
@@ -596,14 +596,14 @@ BEGIN
                IF(@idPessoaFuncionario IS NOT NULL AND @nomeTabela IN ('RPA_RPS', 'BOLSA'))
                BEGIN
                   ROLLBACK TRANSACTION
-                  SET @retorno = 45 --A Pessoa informada é funcionário da Fundação. Não é possível gerar os lançamentos.
+                  SET @retorno = 45 --A Pessoa informada ï¿½ funcionï¿½rio da Fundaï¿½ï¿½o. Nï¿½o ï¿½ possï¿½vel gerar os lanï¿½amentos.
                   CLOSE crLancamentoContabil
                   DEALLOCATE crLancamentoContabil
                   RETURN
                END               
             END
            
-            --altera a string do complemento com os dados do lançamento
+            --altera a string do complemento com os dados do lanï¿½amento
             DECLARE @sqlComplemento nvarchar(300), @parametroComplemento nvarchar(100), @nomeCampo varchar(300), @valorCampo varchar(300)
             WHILE (PATINDEX('%{%',@complemento) > 0)
             BEGIN
@@ -640,7 +640,7 @@ BEGIN
                      )
                   BEGIN
                      ROLLBACK TRANSACTION
-                     SET @retorno = 55 --'Não é permitido gerar Lançamentos para esta rubrica pois deve ser registrada na Central Despesa.'
+                     SET @retorno = 55 --'Nï¿½o ï¿½ permitido gerar Lanï¿½amentos para esta rubrica pois deve ser registrada na Central Despesa.'
                      CLOSE crLancamentoContabil
                      DEALLOCATE crLancamentoContabil
                      RETURN
@@ -679,7 +679,7 @@ BEGIN
                SET @GerarDocPagamento = CASE @idTciFormaPagamento WHEN dbo.fcBuscarTabelaCampoItemPorNome('LANCAMENTO', 'FORMA_PAGAMENTO', 'BORDERO')  THEN 'B'
                                                                   WHEN dbo.fcBuscarTabelaCampoItemPorNome('LANCAMENTO', 'FORMA_PAGAMENTO', 'CHEQUE')   THEN 'C'
                                                                   WHEN dbo.fcBuscarTabelaCampoItemPorNome('LANCAMENTO', 'FORMA_PAGAMENTO', 'OFICIO')  THEN 'P'
-                                        ELSE 'N' END --não gerar nada
+                                        ELSE 'N' END --nï¿½o gerar nada
 
                INSERT INTO dbo.AGENDAMENTO
                   (DEBITO_CREDITO
@@ -732,7 +732,7 @@ BEGIN
 				  )
 
             END
-            ELSE --gera o registro em Lançamento
+            ELSE --gera o registro em Lanï¿½amento
             BEGIN
                EXEC dbo.spInserirLancamento
                            @id_lancamento OUTPUT
@@ -768,7 +768,7 @@ BEGIN
                   IF(@liberarPgtoPessoa = 'N')
                   BEGIN
                      ROLLBACK TRANSACTION
-                     SET @retorno = 164 --Esta Pessoa não está liberada para receber Pagamentos.'
+                     SET @retorno = 164 --Esta Pessoa nï¿½o estï¿½ liberada para receber Pagamentos.'
                      CLOSE crLancamentoContabil
                      DEALLOCATE crLancamentoContabil
                      RETURN
@@ -796,7 +796,7 @@ BEGIN
                   IF(@liberarPgtoPessoa = 'N')
                   BEGIN
                      ROLLBACK TRANSACTION
-                     SET @retorno = 164 --Esta Pessoa não está liberada para receber Pagamentos.'
+                     SET @retorno = 164 --Esta Pessoa nï¿½o estï¿½ liberada para receber Pagamentos.'
                      CLOSE crLancamentoContabil
                      DEALLOCATE crLancamentoContabil
                      RETURN
@@ -825,14 +825,14 @@ BEGIN
                   IF(@liberarPgtoPessoa = 'N')
                   BEGIN
                      ROLLBACK TRANSACTION
-                     SET @retorno = 164 --Esta Pessoa não está liberada para receber Pagamentos.'
+                     SET @retorno = 164 --Esta Pessoa nï¿½o estï¿½ liberada para receber Pagamentos.'
                      CLOSE crLancamentoContabil
                      DEALLOCATE crLancamentoContabil
                      RETURN
                   END                   
                    
                   EXEC dbo.spInserirBordero @id_lancamento, @idPessoaBeneficiario, @nomeTabela, @retorno OUTPUT
-                  --se um dos dados bancários não existir, não deixar gerar lançamento para pagamento por borderô
+                  --se um dos dados bancï¿½rios nï¿½o existir, nï¿½o deixar gerar lanï¿½amento para pagamento por borderï¿½
                   IF(@retorno > 0)
                   BEGIN
                      ROLLBACK TRANSACTION
@@ -847,7 +847,7 @@ BEGIN
    END TRY
    BEGIN CATCH
       ROLLBACK TRANSACTION
-      SET @retorno = 5 --Erro ao Gerar os Lançamentos
+      SET @retorno = 5 --Erro ao Gerar os Lanï¿½amentos
       CLOSE crLancamentoContabil
       DEALLOCATE crLancamentoContabil
       RETURN
@@ -862,7 +862,7 @@ END
 IF(@cont = 0 AND @retorno = 0)
 BEGIN
    ROLLBACK TRANSACTION
-   SET @retorno = 9 --Não existem parâmetros para geração dos lançamentos
+   SET @retorno = 9 --Nï¿½o existem parï¿½metros para geraï¿½ï¿½o dos lanï¿½amentos
    CLOSE crLancamentoContabil
    DEALLOCATE crLancamentoContabil
    RETURN
@@ -886,6 +886,6 @@ END
 ELSE
 BEGIN
    ROLLBACK TRANSACTION
-   SET @retorno = 1 --Erro não identificado
+   SET @retorno = 1 --Erro nï¿½o identificado
    RETURN
 END

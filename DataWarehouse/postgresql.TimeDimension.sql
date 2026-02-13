@@ -2,7 +2,7 @@
 -- Author: Fernando Prass | Create date: 03/11/2012
 -- Language: PostgreSQL 9.5+
 -- Description: Create and populate a time dimension for data warehouses
--- Contact: https://gitlab.com/fernandoprass or https://twitter.com/oFernandoPrass
+-- Contact: https://github.com/fernandoprass or https://twitter.com/oFernandoPrass
 -- =====================================================================
 
 create table dim_time (

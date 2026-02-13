@@ -3,7 +3,7 @@
 -- Language: T-SQL for SQL Server 2010+
 -- Description: Connect a Web Service and get a Brazilian address informing the CEP (ZIP code)
 -- Note: You must activate OLE automation procedures to use this
--- Contact: https://gitlab.com/fernando.prass or https://twitter.com/oFernandoPrass
+-- Contact: https://github.com/fernandoprass or https://twitter.com/oFernandoPrass
 -- =====================================================================
 CREATE PROCEDURE [spGetAddressByCEP] (
     @nrCep VARCHAR(20)
@@ -11,7 +11,7 @@ CREATE PROCEDURE [spGetAddressByCEP] (
 AS BEGIN
      DECLARE @obj INT, @Url VARCHAR(255), @resposta VARCHAR(8000), @xml XML
   
-    -- Recupera apenas os números do CEP
+    -- Recupera apenas os nï¿½meros do CEP
     DECLARE @startingIndex INT = 0
     
     WHILE (1=1)

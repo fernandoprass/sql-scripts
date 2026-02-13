@@ -2,7 +2,7 @@
 -- Author: Fernando Prass | Create date: 03/11/2012
 -- Language: T-SQL for SQL Server 2010+
 -- Description: Create and populate a time dimension for data warehouses
--- Contact: https://gitlab.com/fernandoprass or https://twitter.com/oFernandoPrass
+-- Contact: https://github.com/fernandoprass or https://twitter.com/oFernandoPrass
 -- =====================================================================
 
 

@@ -2,7 +2,7 @@
 -- Author: Fernando Prass | Create date: 30/05/2014
 -- Language: T-SQL for SQL Server 2010+
 -- Description: Generate INSERTs command from a table records
--- Contact: https://gitlab.com/fernando.prass or https://twitter.com/oFernandoPrass
+-- Contact: https://github.com/fernandoprass or https://twitter.com/oFernandoPrass
 -- Parameters
 --    @owner -> table schema
 --    @table_name -> table name
@@ -28,16 +28,16 @@ BEGIN
    SET NOCOUNT ON
 
    DECLARE
-      @disable_constraints bit = 0,         -- Quando 1, desativa restrições de chaves estrangeiras e permite-lhes após o INSERT
-      @ommit_computed_cols bit = 1,         -- Quando 1, colunas computadas não serão incluídas na declaração INSERT
-      @ommit_images bit = 0,                -- Utilize este parâmetro para gerar instruções INSERT, omitindo as colunas de 'imagem'
-      @include_timestamp bit = 1,           -- Especifique 1 para este parâmetro, se você deseja incluir os dados TIMESTAMP / coluna rowversion na instrução INSERT
-      @debug_mode bit = 0,                  -- Se debug_mode @ é definida como 1, os comandos SQL construídos por esse procedimento será impresso para posterior exame
-      @from varchar(800) = NULL,            -- Utilize este parâmetro para filtrar as linhas com base em uma condição de filtro (usando WHERE)
-      @ommit_identity bit,                  -- Utilize este parâmetro para omitir as colunas de identidade , por default omite esse tipo de coluna no insert
-      @target_table varchar(776) = NULL     -- Utilize este parâmetro para especificar um nome de tabela diferente na qual os dados serão inseridos
+      @disable_constraints bit = 0,         -- Quando 1, desativa restriï¿½ï¿½es de chaves estrangeiras e permite-lhes apï¿½s o INSERT
+      @ommit_computed_cols bit = 1,         -- Quando 1, colunas computadas nï¿½o serï¿½o incluï¿½das na declaraï¿½ï¿½o INSERT
+      @ommit_images bit = 0,                -- Utilize este parï¿½metro para gerar instruï¿½ï¿½es INSERT, omitindo as colunas de 'imagem'
+      @include_timestamp bit = 1,           -- Especifique 1 para este parï¿½metro, se vocï¿½ deseja incluir os dados TIMESTAMP / coluna rowversion na instruï¿½ï¿½o INSERT
+      @debug_mode bit = 0,                  -- Se debug_mode @ ï¿½ definida como 1, os comandos SQL construï¿½dos por esse procedimento serï¿½ impresso para posterior exame
+      @from varchar(800) = NULL,            -- Utilize este parï¿½metro para filtrar as linhas com base em uma condiï¿½ï¿½o de filtro (usando WHERE)
+      @ommit_identity bit,                  -- Utilize este parï¿½metro para omitir as colunas de identidade , por default omite esse tipo de coluna no insert
+      @target_table varchar(776) = NULL     -- Utilize este parï¿½metro para especificar um nome de tabela diferente na qual os dados serï¿½o inseridos
 
-   --verifica se a coluna é IDENTITY (se for não insere no insert)
+   --verifica se a coluna ï¿½ IDENTITY (se for nï¿½o insere no insert)
    SELECT @ommit_identity = c.is_identity
    FROM SYS.ALL_COLUMNS c
       INNER JOIN SYS.TABLES t ON t.OBJECT_ID = c.OBJECT_ID
@@ -52,22 +52,22 @@ BEGIN
    --Making sure user only uses either @cols_to_include or @cols_to_exclude
    IF ((@cols_to_include IS NOT NULL) AND (@cols_to_exclude IS NOT NULL))
    BEGIN
-       RAISERROR('Use @cols_to_include ou @cols_to_exclude. Não usar os parâmetros de uma só vez',16,1)
+       RAISERROR('Use @cols_to_include ou @cols_to_exclude. Nï¿½o usar os parï¿½metros de uma sï¿½ vez',16,1)
        RETURN -1
    END
 
    --Making sure the @cols_to_include and @cols_to_exclude parameters are receiving values in proper format
    IF ((@cols_to_include IS NOT NULL) AND (PATINDEX('''%''',@cols_to_include) = 0))
    BEGIN
-       RAISERROR('Uso inválido de propriedade @cols_to_include',16,1)
-       PRINT 'Especifique os nomes de coluna entre aspas simples e separados por vírgulas'
+       RAISERROR('Uso invï¿½lido de propriedade @cols_to_include',16,1)
+       PRINT 'Especifique os nomes de coluna entre aspas simples e separados por vï¿½rgulas'
        RETURN -1
    END
 
    IF ((@cols_to_exclude IS NOT NULL) AND (PATINDEX('''%''',@cols_to_exclude) = 0))
    BEGIN
-       RAISERROR('Uso inválido de propriedade @cols_to_exclude',16,1)
-       PRINT 'Especifique os nomes de coluna entre aspas simples e separados por vírgulas'
+       RAISERROR('Uso invï¿½lido de propriedade @cols_to_exclude',16,1)
+       PRINT 'Especifique os nomes de coluna entre aspas simples e separados por vï¿½rgulas'
        RETURN -1
    END
 
@@ -126,17 +126,17 @@ BEGIN
        BEGIN
            IF (@ommit_images = 0)
            BEGIN
-               RAISERROR('As tabelas com colunas de imagem não são suportadas.',16,1)
-               PRINT 'Use @ommit_images = 1 parâmetro para gerar inserções para o resto das colunas.'
+               RAISERROR('As tabelas com colunas de imagem nï¿½o sï¿½o suportadas.',16,1)
+               PRINT 'Use @ommit_images = 1 parï¿½metro para gerar inserï¿½ï¿½es para o resto das colunas.'
                RETURN -1
            END
            ELSE
               GOTO SKIP_LOOP
        END
 
-       --Determinar o tipo de dados da coluna e, dependendo do tipo de dados, a parte VALUES da instrução INSERT é gerado.
-       --O cuidado é tomado para lidar com colunas com valores NULL.
-       --Também certificando-se, para não perder nenhum dados de flot, real, smallmomey, colunas datetime
+       --Determinar o tipo de dados da coluna e, dependendo do tipo de dados, a parte VALUES da instruï¿½ï¿½o INSERT ï¿½ gerado.
+       --O cuidado ï¿½ tomado para lidar com colunas com valores NULL.
+       --Tambï¿½m certificando-se, para nï¿½o perder nenhum dados de flot, real, smallmomey, colunas datetime
        SET @Actual_Values = @Actual_Values 
                           + CASE WHEN @Data_Type IN ('char','varchar','nchar','nvarchar') THEN 'COALESCE('''''''' + REPLACE(RTRIM(' + @Column_Name + '),'''''''','''''''''''')+'''''''',''NULL'')'
                                   WHEN @Data_Type IN ('datetime','smalldatetime','time','date') THEN 'COALESCE('''''''' + CONVERT(varchar,' + @Column_Name + ',21)+'''''''',''NULL'')'
@@ -148,7 +148,7 @@ BEGIN
                               ELSE 'COALESCE(LTRIM(RTRIM(' + 'CONVERT(char, ' +  @Column_Name  + ')' + ')),''NULL'')'
                              END   + '+' +  ''',''' + ' + '
                                
-       -- Geração da lista de colunas para a instrução INSERT
+       -- Geraï¿½ï¿½o da lista de colunas para a instruï¿½ï¿½o INSERT
        SET @Column_List = @Column_List +  @Column_Name + ','   
 
        SKIP_LOOP: --variavel para ser utilizada pelo GOTO
@@ -162,17 +162,17 @@ BEGIN
    --Loop finaliza aqui
    END
 
-   -- Para se livrar dos personagens extras que tenho concatenados durante a última corrida através do laço
+   -- Para se livrar dos personagens extras que tenho concatenados durante a ï¿½ltima corrida atravï¿½s do laï¿½o
    SET @Column_List = LEFT(@Column_List,len(@Column_List) - 1)
    SET @Actual_Values = LEFT(@Actual_Values,len(@Actual_Values) - 6)
 
    IF LTRIM(@Column_List) = ''
    BEGIN
-       RAISERROR('Não há colunas para selecionar. Não deveria ser pelo menos uma coluna para gerar a saída',16,1)
+       RAISERROR('Nï¿½o hï¿½ colunas para selecionar. Nï¿½o deveria ser pelo menos uma coluna para gerar a saï¿½da',16,1)
        RETURN -1
    END
 
-   -- Formar a seqüência final, que será executado, a saída do comando INSERT
+   -- Formar a seqï¿½ï¿½ncia final, que serï¿½ executado, a saï¿½da do comando INSERT
    IF (@include_column_list <> 0)
    BEGIN
        SET @Actual_Values = 'SELECT '
