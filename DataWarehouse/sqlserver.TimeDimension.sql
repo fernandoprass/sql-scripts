@@ -2,8 +2,7 @@
 -- Author: Fernando Prass | Create date: 03/11/2012
 -- Language: T-SQL for SQL Server 2010+
 -- Description: Create and populate a time dimension for data warehouses
--- Contact: https://gitlab.com/fernando.prass or https://twitter.com/oFernandoPrass
--- More information (in Portuguese): http://fp2.com.br/blog/index.php/2012/script-para-popular-dimensao-tempo-data/#more-79
+-- Contact: https://gitlab.com/fernandoprass or https://twitter.com/oFernandoPrass
 -- =====================================================================
 
 
@@ -65,26 +64,12 @@ begin
 	/************************* HOLIDAYS ************************
 	 *****  Here I considered only the Brazilian holidays *****/
 
-	if (@month = 1 and @day in (1,2)) or (@month = 12 and @day = 31) --confraternização universal
+	if (@month = 1 and @day in (1,2)) or (@month = 12 and @day = 31) --confraternizaï¿½ï¿½o universal
 	set @holidayName = 'New Year'
 	else 
-	if (@month = 4 and @day in (20,21,22)) --tiradentes
-	set @holidayName = 'Tiradentes'
-	else 
 	if (@month = 5 and @day in (1,2))or (@month = 4 and @day = 30) --dia do trabalho
-	set @holidayName = 'Labor Day'
-	else 
-	if (@month = 9 and @day in (6,7,8)) --independência do brasil
-	set @holidayName = 'Independence Day'
-	else 
-	if (@month = 10 and @day in (11,12,13)) --nossa senhora aparecida
-	set @holidayName = 'Mother of God'
-	else
-	if (@month = 11 and @day in (1,2,3)) --finados
-	set @holidayName = 'day of the dead'
-	else
-	if (@month = 11 and @day in (14,15,16)) --proclamação da república
-	set @holidayName = 'Republic Proclamation'
+	set @holidayName = 'Internatiponal Labor Day'
+	--add here the other holidays
 	else
 	if (@month = 12 and @day in (24,25,26)) --natal
 	set @holidayName = 'Christmas'
@@ -94,38 +79,26 @@ begin
    (carnival, Easter and corpus cristis) should be added here */
 
 	--setting the day before the holiday as TRUE or FALSE
-	if (@month = 12 and @day = 31) or --confraternização universal
-		(@month = 4 and @day = 20) or --tiradentes
-		(@month = 4 and @day = 30) or --dia do trabalho
-		(@month = 9 and @day = 6) or --independência do brasil
-		(@month = 10 and @day = 11) or --nossa senhora aparecida
-		(@month = 11 and @day = 1) or --finados
-		(@month = 11 and @day = 14) or --proclamação da república
-		(@month = 12 and @day = 24) --natal
+	if (@month = 12 and @day = 31) or --new year
+		(@month = 4 and @day = 30) or --internatiponal labor day
+		--add here the day before the other holidays
+		(@month = 12 and @day = 24) --Christmas
 		set @preHoliday = 1
 	else set @preHoliday = 0
 
 	--setting the day of the holiday as TRUE or FALSE
-	if (@month = 1 and @day = 1) or --confraternização universal
-		(@month = 4 and @day = 21) or --tiradentes
-		(@month = 5 and @day = 1) or --dia do trabalho
-		(@month = 9 and @day = 7) or --independência do brasil
-		(@month = 10 and @day = 12) or --nossa senhora aparecida
-		(@month = 11 and @day = 2) or --finados
-		(@month = 11 and @day = 15) or --proclamação da república
+	if (@month = 1 and @day = 1) or --new yearl
+		(@month = 5 and @day = 1) or --internatiponal labor day
+		--add here the other holidays
 		(@month = 12 and @day = 25) --natal
 		set @holiday = 1
 	else set @holiday = 0
 
 	--setting the day after the holiday as TRUE or FALSE
-	if (@month = 1 and @day = 2) or --confraternização universal
-		(@month = 4 and @day = 22) or --tiradentes
-		(@month = 5 and @day = 2) or --dia do trabalho
-		(@month = 9 and @day = 8) or --independência do brasil
-		(@month = 10 and @day = 13) or --nossa senhora aparecida
-		(@month = 11 and @day = 3) or --finados
-		(@month = 11 and @day = 16) or --proclamação da república
-		(@month = 12 and @day = 26) --natal
+	if (@month = 1 and @day = 2) or --new year
+		(@month = 5 and @day = 2) or --internatiponal labor day
+		--add here the day after the other holidays
+		(@month = 12 and @day = 26) --Christmas
 		set @posHoliday = 1
 	else set @posHoliday = 0
 
